@@ -1,3 +1,5 @@
+/* global getMousePosition, addPointToCanvas, connectAndSubscribe */
+
 var app = (function () {
 
     class Point{
@@ -12,21 +14,22 @@ var app = (function () {
     var addPointToCanvas = function (point) {        
         var canvas = document.getElementById("canvas");
         var ctx = canvas.getContext("2d");
-        console.log({x:point.x,y:point.y}+"--->");
-        stompClient.send("/topic/newpoint", {}, JSON.stringify({x:point.x,y:point.y}));
         ctx.beginPath();
         ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
         ctx.stroke();
+        stompClient.send("/topic/newpoint", {}, JSON.stringify({x:point.x,y:point.y}));
     };
     
     
     var getMousePosition = function (evt) {
+       
         canvas = document.getElementById("canvas");
         var rect = canvas.getBoundingClientRect();
         return {
             x: evt.clientX - rect.left,
             y: evt.clientY - rect.top
         };
+    
     };
 
 
@@ -41,7 +44,6 @@ var app = (function () {
             stompClient.subscribe('/topic/newpoint', function (eventbody) {
                 var theObject=JSON.parse(eventbody.body);
                 alert("Putnto : X "+theObject.x+" Y "+theObject.y);
-                
             });
         });
 
@@ -53,7 +55,7 @@ var app = (function () {
 
         init: function () {
             var can = document.getElementById("canvas");
-            
+            //can.addEventListener("click",getMousePosition());
             //websocket connection
             connectAndSubscribe();
         },
