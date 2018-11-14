@@ -1,4 +1,4 @@
-/* global getMousePosition, addPointToCanvas, connectAndSubscribe */
+/* global getMousePosition, addPointToCanvas, connectAndSubscribe, addPolygonToCanvas */
 
 var app = (function () {
 
@@ -19,6 +19,18 @@ var app = (function () {
         ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
         ctx.stroke();
 //        stompClient.send("/topic/newpoint", {}, JSON.stringify({x:point.x,y:point.y}));
+    };
+    
+     var addPolygonToCanvas = function (points) {
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        console.log("POLO--->" +points);
+        for (i in points){
+            ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.fill();
     };
     
     
@@ -48,6 +60,13 @@ var app = (function () {
                 //alert("Punto : X "+theObject.x+" Y "+theObject.y);
                 addPointToCanvas(theObject);
             });
+            
+            stompClient.subscribe('/topic/newpolygon.'+identifier, function (eventbody){
+                var polygon = JSON.parse(eventbody.body);
+                addPolygonToCanvas(polygon);
+            });
+            
+            
         });
 
     };
@@ -62,16 +81,17 @@ var app = (function () {
             //can.addEventListener("click",getMousePosition());
             $(can).click( function (e){
                 var pt = getMousePosition(e);
-                console.info("publishing point at "+pt);
-                stompClient.send("/topic/newpoint."+identifier, {}, JSON.stringify(pt));
+                console.info("publishing point at " + pt) ;
+                stompClient.send("/app/newpoint."+identifier, {}, JSON.stringify(pt));
             });
 //            websocket connection
+            
             connectAndSubscribe(id);
         },
 
         publishPoint: function(px,py){
             var pt=new Point(px,py);
-            console.info("publishing point at "+ pt);
+            console.info("publishing point at Point"+ pt);
             addPointToCanvas(pt);
 //            stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
         
