@@ -3,9 +3,8 @@
 ### Laboratorio - Broker de Mensajes STOMP con WebSockets + HTML5 Canvas.
 
 
+[![Heroku](https://wmpics.pics/di-D9YP.png)](https://peaceful-lowlands-42629.herokuapp.com/)
 
-HEROKU LINK:
-https://peaceful-lowlands-42629.herokuapp.com/
 
 
 ![](img/P2-AD.png)
